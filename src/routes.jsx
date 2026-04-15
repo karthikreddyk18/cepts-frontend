@@ -1,29 +1,51 @@
-import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import StudentDashboard from "./pages/StudentDashboard";
+const FacultyDashboard = () => {
+  const [stats, setStats] = useState({
+    totalCourses: 0,
+    totalStudents: 0,
+    avgCompletion: 0,
+  });
 
-import ProtectedRoute from "./components/ProtectedRoute";
-
-const AppRoutes = () => {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
+    <div className="p-6">
 
-      {/* Protected Route */}
-      <Route
-        path="/student-dashboard"
-        element={
-          <ProtectedRoute>
-            <StudentDashboard />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+      <div className="grid grid-cols-3 gap-6 mt-6">
+
+        <div className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border">
+          <div className="p-3 bg-blue-100 rounded-lg">📘</div>
+          <div>
+            <p className="text-gray-500">Total Courses</p>
+            <h2 className="text-2xl font-bold">
+              {stats?.totalCourses || 0}
+            </h2>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border">
+          <div className="p-3 bg-orange-100 rounded-lg">👥</div>
+          <div>
+            <p className="text-gray-500">Total Students</p>
+            <h2 className="text-2xl font-bold">
+              {stats?.totalStudents || 0}
+            </h2>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm border">
+          <div className="p-3 bg-green-100 rounded-lg">📈</div>
+          <div>
+            <p className="text-gray-500">Avg. Completion</p>
+            <h2 className="text-2xl font-bold">
+              {stats?.avgCompletion || 0}%
+            </h2>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
   );
 };
 
-export default AppRoutes;
+export default FacultyDashboard;

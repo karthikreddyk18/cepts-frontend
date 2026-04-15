@@ -1,44 +1,42 @@
-import { createContext, useState, useEffect } from "react";
-import { loginUser, registerUser } from "../services/authService";
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load from localStorage
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (userInfo) {
+      setUser(userInfo);
+    }
+    setLoading(false);
   }, []);
 
-  // 🔹 Register
-  const register = async (formData) => {
-    const { data } = await registerUser(formData);
-    localStorage.setItem("user", JSON.stringify(data));
+  const login = async (email, password) => {
+    const { data } = await axios.post('/api/auth/login', { email, password });
     setUser(data);
+    localStorage.setItem('userInfo', JSON.stringify(data));
   };
 
-  // 🔹 Login
-  const login = async (formData) => {
-  const res = await loginUser(formData);
+  const register = async (name, email, password, role) => {
+    const { data } = await axios.post('/api/auth/register', { name, email, password, role });
+    setUser(data);
+    localStorage.setItem('userInfo', JSON.stringify(data));
+  };
 
-  // ✅ store token
-  localStorage.setItem("token", res.data.token);
-
-  return res.data; // 🔥 THIS LINE IS MISSING
-};
-
-  // 🔹 Logout
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     setUser(null);
+    localStorage.removeItem('userInfo');
   };
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);
